@@ -62,3 +62,6 @@ int main()
 	* pop
 	* empty
 	* size
+
+# Custom Allocators:
+By default allocator / deallocator used is malloc and free. It can be changed by changing _ccontainer_default_allocator.alloc and _ccontainer_default_allocator.dealloc on header "allocator.h"
