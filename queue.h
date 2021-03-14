@@ -56,15 +56,15 @@ void queue_destroy_##T(QUEUE_TYPE_PTR(T) q) \
 }
 
 #define IMPL_QUEUE_PUSH_VAL(T) \
-void queue_push_##T(QUEUE_TYPE_PTR(T) q, T val) \
+bool queue_push_##T(QUEUE_TYPE_PTR(T) q, T val) \
 { \
-  list_push_back_##T(q, val); \
+  return list_push_back_##T(q, val); \
 }
 
 #define IMPL_QUEUE_PUSH_PTR(T) \
-void queue_push_##T(QUEUE_TYPE_PTR(T) q, const T* val) \
+bool queue_push_##T(QUEUE_TYPE_PTR(T) q, const T* val) \
 { \
-  list_push_back_##T(q, val); \
+  return list_push_back_##T(q, val); \
 }
 
 #define IMPL_QUEUE_POP(T) \
