@@ -92,7 +92,7 @@ size_t vector_size_##T(VECTOR_TYPE_PTR(T) vec) \
 }
 
 #define IMPL_VECTOR_ALLOCATE(T) \
-bool _vector_allocate_##T(VECTOR_TYPE_PTR(T) vec, size_t size) \
+bool detail_vector_allocate_##T(VECTOR_TYPE_PTR(T) vec, size_t size) \
 { \
   size_t new_capacity; \
   T* new_data; \
@@ -113,9 +113,9 @@ bool _vector_allocate_##T(VECTOR_TYPE_PTR(T) vec, size_t size) \
   return true; \
 } \
 \
-bool _vector_grow_##T(VECTOR_TYPE_PTR(T) vec) \
+bool detail_vector_grow_##T(VECTOR_TYPE_PTR(T) vec) \
 { \
-  return _vector_allocate_##T(vec, CCONTAINER_MAX(vec->_capacity * 2, 10)); \
+  return detail_vector_allocate_##T(vec, CCONTAINER_MAX(vec->_capacity * 2, 10)); \
 }
 
 #define IMPL_VECTOR_CLEAR(T) \
@@ -128,7 +128,7 @@ void vector_clear_##T(VECTOR_TYPE_PTR(T) vec) \
 bool vector_push_back_##T(VECTOR_TYPE_PTR(T) vec, T val) \
 { \
   if(vec->_size == vec->_capacity) { \
-    if(!_vector_grow_##T(vec)) { \
+    if(!detail_vector_grow_##T(vec)) { \
       return false; \
     } \
   } \
@@ -141,7 +141,7 @@ bool vector_push_back_##T(VECTOR_TYPE_PTR(T) vec, T val) \
 bool vector_push_back_##T(VECTOR_TYPE_PTR(T) vec, const T* val) \
 { \
   if(vec->_size == vec->_capacity) { \
-    if(!_vector_grow_##T(vec)) { \
+    if(!detail_vector_grow_##T(vec)) { \
       return false; \
     } \
   } \
@@ -162,7 +162,7 @@ bool vector_insert_##T(VECTOR_TYPE_PTR(T) vec, size_t pos, T val) \
   size_t i; \
 \
   if(vec->_size == vec->_capacity) { \
-    if(!_vector_grow_##T(vec)) { \
+    if(!detail_vector_grow_##T(vec)) { \
       return false; \
     } \
   } \
@@ -186,7 +186,7 @@ bool vector_insert_##T(VECTOR_TYPE_PTR(T) vec, size_t pos, const T* val) \
   size_t i; \
 \
   if(vec->_size == vec->_capacity) { \
-    if(!_vector_grow_##T(vec)) { \
+    if(!detail_vector_grow_##T(vec)) { \
       return false; \
     } \
   } \
@@ -253,7 +253,7 @@ size_t vector_capacity_##T(VECTOR_TYPE_PTR(T) vec) \
 bool vector_shrink_to_fit_##T(VECTOR_TYPE_PTR(T) vec) \
 { \
   if(vec->_size) { \
-    return _vector_allocate_##T(vec, vec->_size); \
+    return detail_vector_allocate_##T(vec, vec->_size); \
   } \
 \
   return true; \

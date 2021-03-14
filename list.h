@@ -76,7 +76,7 @@ typedef struct \
   struct _list_data* tail; \
 } LIST_TYPE(T); \
 \
-void _list_connect_##T(LIST_TYPE_PTR(T) l, struct _list_data* root, struct _list_data* new_data) \
+void detail_list_connect_##T(LIST_TYPE_PTR(T) l, struct _list_data* root, struct _list_data* new_data) \
 { \
   if(!l->head) { \
     l->head = l->tail = new_data; \
@@ -97,7 +97,7 @@ void _list_connect_##T(LIST_TYPE_PTR(T) l, struct _list_data* root, struct _list
   } \
 } \
 \
-void _list_disconnect_##T(LIST_TYPE_PTR(T) l, struct _list_data* data) \
+void detail_list_disconnect_##T(LIST_TYPE_PTR(T) l, struct _list_data* data) \
 { \
   if(l->head == l->tail) { \
     l->head = l->tail = NULL; \
@@ -115,7 +115,7 @@ void _list_disconnect_##T(LIST_TYPE_PTR(T) l, struct _list_data* data) \
   } \
 } \
 \
-void _list_destroy_item_##T(struct _list_data* data) \
+void detail_list_destroy_item_##T(struct _list_data* data) \
 { \
   (*_ccontainer_default_allocator.dealloc)(data->data); \
   (*_ccontainer_default_allocator.dealloc)(data); \
@@ -132,9 +132,9 @@ void list_destroy_##T(LIST_TYPE_PTR(T) l) \
   struct _list_data* tail; \
   while(l->head) { \
     tail = l->tail; \
-    _list_disconnect_##T(l, tail); \
+    detail_list_disconnect_##T(l, tail); \
 \
-    _list_destroy_item_##T(tail); \
+    detail_list_destroy_item_##T(tail); \
   } \
 }
 
@@ -164,7 +164,7 @@ bool list_push_back_##T(LIST_TYPE_PTR(T) l, T value) \
   new_tail->next = NULL; \
   new_tail->prev = NULL; \
 \
-  _list_connect_##T(l, l->tail, new_tail); \
+  detail_list_connect_##T(l, l->tail, new_tail); \
   return true; \
 }
 
@@ -188,7 +188,7 @@ bool list_push_front_##T(LIST_TYPE_PTR(T) l, T value) \
   new_head->next = NULL; \
   new_head->prev = NULL; \
 \
-  _list_connect_##T(l, l->head, new_head); \
+  detail_list_connect_##T(l, l->head, new_head); \
   return true; \
 }
 
@@ -212,7 +212,7 @@ bool list_push_back_##T(LIST_TYPE_PTR(T) l, const T* value) \
   new_tail->next = NULL; \
   new_tail->prev = NULL; \
 \
-  _list_connect_##T(l, l->tail, new_tail); \
+  detail_list_connect_##T(l, l->tail, new_tail); \
   return true; \
 }
 
@@ -236,7 +236,7 @@ bool list_push_front_##T(LIST_TYPE_PTR(T) l, const T* value) \
   new_head->next = NULL; \
   new_head->prev = NULL; \
 \
-  _list_connect_##T(l, l->head, new_head); \
+  detail_list_connect_##T(l, l->head, new_head); \
   return true; \
 }
 
@@ -266,7 +266,7 @@ bool list_insert_##T(LIST_TYPE_PTR(T) l, size_t pos, T value) \
     --pos; \
   } \
 \
-  _list_connect_##T(l, root, new_data); \
+  detail_list_connect_##T(l, root, new_data); \
   return true; \
 }
 
@@ -296,7 +296,7 @@ bool list_insert_##T(LIST_TYPE_PTR(T) l, size_t pos, const T* value) \
   --pos; \
   } \
   \
-  _list_connect_##T(l, root, new_data); \
+  detail_list_connect_##T(l, root, new_data); \
   return true; \
 }
 
@@ -309,7 +309,7 @@ void list_erase_##T(LIST_TYPE_PTR(T) l, size_t index) \
     cur = cur->next; \
   } \
 \
-  _list_disconnect_##T(l, cur); \
+  detail_list_disconnect_##T(l, cur); \
   (*_ccontainer_default_allocator.dealloc)(cur->data); \
   (*_ccontainer_default_allocator.dealloc)(cur); \
 }
@@ -319,10 +319,10 @@ void list_pop_back_##T(LIST_TYPE_PTR(T) l, T* out) \
 { \
   struct _list_data* tail = l->tail; \
 \
-  _list_disconnect_##T(l, tail); \
+  detail_list_disconnect_##T(l, tail); \
   memcpy(out, tail, sizeof(T)); \
 \
-  _list_destroy_item_##T(tail); \
+  detail_list_destroy_item_##T(tail); \
 }
 
 #define IMPL_LIST_POP_FRONT(T) \
@@ -330,10 +330,10 @@ void list_pop_front_##T(LIST_TYPE_PTR(T) l, T* out) \
 { \
   struct _list_data* head = l->head; \
 \
-  _list_disconnect_##T(l, head); \
+  detail_list_disconnect_##T(l, head); \
   memcpy(out, head, sizeof(T)); \
 \
-  _list_destroy_item_##T(head); \
+  detail_list_destroy_item_##T(head); \
 }
 
 #define IMPL_LIST_AT(T) \
