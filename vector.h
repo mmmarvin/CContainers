@@ -39,13 +39,13 @@
   IMPL_VECTOR_CLEAR(T) \
   IMPL_VECTOR_PUSH_VAL(T) \
   IMPL_VECTOR_INSERT_VAL(T) \
+  IMPL_VECTOR_ERASE(T) \
   IMPL_VECTOR_POP(T) \
   IMPL_VECTOR_AT(T) \
   IMPL_VECTOR_FRONT(T) \
   IMPL_VECTOR_BACK(T) \
   IMPL_VECTOR_DATA(T) \
   IMPL_VECTOR_EMPTY(T) \
-  IMPL_VECTOR_SIZE(T) \
   IMPL_VECTOR_CAPACITY(T) \
   IMPL_VECTOR_SHRINK(T) \
 
@@ -55,13 +55,13 @@
   IMPL_VECTOR_CLEAR(T) \
   IMPL_VECTOR_PUSH_PTR(T) \
   IMPL_VECTOR_INSERT_PTR(T) \
+  IMPL_VECTOR_ERASE(T) \
   IMPL_VECTOR_POP(T) \
   IMPL_VECTOR_AT(T) \
   IMPL_VECTOR_FRONT(T) \
   IMPL_VECTOR_BACK(T) \
   IMPL_VECTOR_DATA(T) \
   IMPL_VECTOR_EMPTY(T) \
-  IMPL_VECTOR_SIZE(T) \
   IMPL_VECTOR_CAPACITY(T) \
   IMPL_VECTOR_SHRINK(T) \
 
@@ -85,6 +85,11 @@ void vector_destroy_##T(VECTOR_TYPE_PTR(T) vec) \
     (*_ccontainer_default_allocator.dealloc)(vec->_ptr); \
   } \
 } \
+\
+size_t vector_size_##T(VECTOR_TYPE_PTR(T) vec) \
+{ \
+  return vec->_size; \
+}
 
 #define IMPL_VECTOR_ALLOCATE(T) \
 bool _vector_allocate_##T(VECTOR_TYPE_PTR(T) vec, size_t size) \
@@ -199,6 +204,15 @@ bool vector_insert_##T(VECTOR_TYPE_PTR(T) vec, size_t pos, const T* val) \
   return true; \
 }
 
+#define IMPL_VECTOR_ERASE(T) \
+void vector_erase_##T(VECTOR_TYPE_PTR(T) vec, size_t index) \
+{ \
+  for(size_t i = index, isize = vector_size_##T(vec) - 1; i < isize; ++i) { \
+    vec->_ptr[i] = vec->_ptr[i + 1]; \
+  } \
+  --vec->_size; \
+}
+
 #define IMPL_VECTOR_AT(T) \
 T* vector_at_##T(VECTOR_TYPE_PTR(T) vec, size_t index) \
 { \
@@ -227,12 +241,6 @@ T* vector_data_##T(VECTOR_TYPE_PTR(T) vec) \
 bool vector_empty_##T(VECTOR_TYPE_PTR(T) vec) \
 { \
   return !vec->_size; \
-}
-
-#define IMPL_VECTOR_SIZE(T) \
-size_t vector_size_##T(VECTOR_TYPE_PTR(T) vec) \
-{ \
-  return vec->_size; \
 }
 
 #define IMPL_VECTOR_CAPACITY(T) \

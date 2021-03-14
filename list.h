@@ -38,6 +38,7 @@
   IMPL_LIST_PUSH_BACK_VAL(T) \
   IMPL_LIST_PUSH_FRONT_VAL(T) \
   IMPL_LIST_INSERT_VAL(T) \
+  IMPL_LIST_ERASE(T) \
   IMPL_LIST_POP_BACK(T) \
   IMPL_LIST_POP_FRONT(T) \
   IMPL_LIST_AT(T) \
@@ -52,6 +53,7 @@
   IMPL_LIST_PUSH_BACK_PTR(T) \
   IMPL_LIST_PUSH_FRONT_PTR(T) \
   IMPL_LIST_INSERT_PTR(T) \
+  IMPL_LIST_ERASE(T) \
   IMPL_LIST_POP_BACK(T) \
   IMPL_LIST_POP_FRONT(T) \
   IMPL_LIST_AT(T) \
@@ -103,9 +105,12 @@ void _list_disconnect_##T(LIST_TYPE_PTR(T) l, struct _list_data* data) \
     if(l->head == data) { \
       data->next->prev = NULL; \
       l->head = data->next; \
-    } else { \
+    } else if(l->tail == data) { \
       data->prev->next = NULL; \
       l->tail = data->prev; \
+    } else { \
+      data->prev->next = data->next; \
+      data->next->prev = data->prev; \
     } \
   } \
 } \
@@ -266,7 +271,7 @@ bool list_insert_##T(LIST_TYPE_PTR(T) l, size_t pos, T value) \
 }
 
 #define IMPL_LIST_INSERT_PTR(T) \
-  bool list_insert_##T(LIST_TYPE_PTR(T) l, size_t pos, const T* value) \
+bool list_insert_##T(LIST_TYPE_PTR(T) l, size_t pos, const T* value) \
 { \
   struct _list_data* new_data, * root; \
   \
@@ -293,7 +298,21 @@ bool list_insert_##T(LIST_TYPE_PTR(T) l, size_t pos, T value) \
   \
   _list_connect_##T(l, root, new_data); \
   return true; \
-  }
+}
+
+#define IMPL_LIST_ERASE(T) \
+void list_erase_##T(LIST_TYPE_PTR(T) l, size_t index) \
+{ \
+  struct _list_data* cur = l->head; \
+\
+  while(index--) { \
+    cur = cur->next; \
+  } \
+\
+  _list_disconnect_##T(l, cur); \
+  (*_ccontainer_default_allocator.dealloc)(cur->data); \
+  (*_ccontainer_default_allocator.dealloc)(cur); \
+}
 
 #define IMPL_LIST_POP_BACK(T) \
 void list_pop_back_##T(LIST_TYPE_PTR(T) l, T* out) \
