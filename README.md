@@ -34,6 +34,7 @@ int main()
 	* push_back
 	* insert
 	* pop_back
+	* erase
 	* empty
 	* size
 	* shrink_to_fit
@@ -47,6 +48,7 @@ int main()
 	* push_front
 	* pop_back
 	* pop_front
+	* erase
 	* empty
 	* size
 	* at
