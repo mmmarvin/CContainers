@@ -46,6 +46,7 @@ int main()
 	* clear
 	* push_back
 	* push_front
+	* insert
 	* pop_back
 	* pop_front
 	* erase
